@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Dough Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css"
+        integrity="sha512-YHuwZabI2zi0k7c9vtg8dK/63QB0hLvD4thw44dFo/TfBFVVQOqEG9WpviaEpbyvgOIYLXF1n7xDUfU3GDs0sw=="
+        crossorigin="anonymous" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- Title -->
+        <div class="row center-xs">
+            <div class="col-xs-12">
+                <h1>Pizza Dough Calculator</h1>
+            </div>
+        </div>
+
+        <!-- Options -->
+        <div class="row center-xs">
+            <div class="col-xs-12 col-sm-8 col-md-6 col-lg-4">
+                <div class="row start-xs" style="margin: 0px;">
+                    <div class="col-xs-12">
+                        <p>Pizza Style:</p>
+                        <select v-model="style" size="1" @change="setIngredients">
+                            <option>Neapolitan</option>
+                            <option>New York Style</option>
+                            <option>Custom</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row start-xs">
+                    <div class="col-xs-12">
+                        <p>Number of Pizzas:</p>
+                        <div class="row start-xs" style="margin: 0px;">
+                            <div class="col-xs-3" style="padding-left: 0px;">
+                                <div class="badge">{{number}}</div>
+                            </div>
+                            <div class="col-xs-9">
+                                <input v-model="number" type="range" min="1" max="20" class="slider" step="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row start-xs" v-if="custom">
+                    <div class="col-xs-12">
+                        <p>Doughball Weight:</p>
+                        <div class="row start-xs" style="margin: 0px;">
+                            <div class="col-xs-3" style="padding-left: 0px;">
+                                <div class="badge">{{weight}}g</div>
+                            </div>
+                            <div class="col-xs-9">
+                                <input v-model="weight" type="range" min="150" max="300" class="slider" step="10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row start-xs" v-if="custom">
+                    <div class="col-xs-12">
+                        <p>Hydration:</p>
+                        <div class="row start-xs" style="margin: 0px;">
+                            <div class="col-xs-3" style="padding-left: 0px;">
+                                <div class="badge">{{water}}%</div>
+                            </div>
+                            <div class="col-xs-9">
+                                <input v-model="water" type="range" min="55" max="75" class="slider" step="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row start-xs" v-if="custom">
+                    <div class="col-xs-12">
+                        <p>Yeast:</p>
+                        <div class="row start-xs" style="margin: 0px;">
+                            <div class="col-xs-3" style="padding-left: 0px;">
+                                <div class="badge">{{yeast}}%</div>
+                            </div>
+                            <div class="col-xs-9">
+                                <input v-model="yeast" type="range" min="0.1" max="2" class="slider" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row start-xs" v-if="custom">
+                    <div class="col-xs-12">
+                        <p>Salt:</p>
+                        <div class="row start-xs" style="margin: 0px;">
+                            <div class="col-xs-3" style="padding-left: 0px;">
+                                <div class="badge">{{salt}}%</div>
+                            </div>
+                            <div class="col-xs-9">
+                                <input v-model="salt" type="range" min="1" max="5" class="slider" step="0.5">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row start-xs" v-if="custom">
+                    <div class="col-xs-12">
+                        <p>Sugar:</p>
+                        <div class="row start-xs" style="margin: 0px;">
+                            <div class="col-xs-3" style="padding-left: 0px;">
+                                <div class="badge">{{sugar}}%</div>
+                            </div>
+                            <div class="col-xs-9">
+                                <input v-model="sugar" type="range" min="0" max="5" class="slider" step="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row start-xs" v-if="custom">
+                    <div class="col-xs-12">
+                        <p>Oil:</p>
+                        <div class="row start-xs" style="margin: 0px;">
+                            <div class="col-xs-3" style="padding-left: 0px;">
+                                <div class="badge">{{oil}}%</div>
+                            </div>
+                            <div class="col-xs-9">
+                                <input v-model="oil" type="range" min="0" max="5" class="slider" step="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ingredients -->
+        <div class="row center-xs">
+            <div class="col-xs-12 col-lg-9">
+                <h2>Ingredients</h2>
+                <div class="row center-xs">
+                    <div class="col-xs-6 col-sm-2">
+                        <div class="badge" style="padding: 20px 15px 10px 15px; margin-bottom: 10%">
+                            <img src="img/flour.png">
+                            <p class="ingredient-name">Flour</p>
+                            <p class="ingredient-amount">{{ingredients.flour}}<span>g</span></p>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-2">
+                        <div class="badge" style="padding: 20px 15px 10px 15px; margin-bottom: 10%">
+                            <img src="img/water.png">
+                            <p class="ingredient-name">Water</p>
+                            <p class="ingredient-amount">{{ingredients.water}}<span>ml</span></p>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-2">
+                        <div class="badge" style="padding: 20px 15px 10px 15px; margin-bottom: 10%">
+                            <img src="img/yeast.png">
+                            <p class="ingredient-name">Instant yeast</p>
+                            <p class="ingredient-amount">{{ingredients.yeast}}<span>g</span></p>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-2">
+                        <div class="badge" style="padding: 20px 15px 10px 15px; margin-bottom: 10%">
+                            <img src="img/salt.png">
+                            <p class="ingredient-name">Salt</p>
+                            <p class="ingredient-amount">{{ingredients.salt}}<span>g</span></p>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-2" v-if="ingredients.sugar > 0">
+                        <div class="badge" style="padding: 20px 15px 10px 15px;">
+                            <img src="img/sugar.png">
+                            <p class="ingredient-name">Sugar</p>
+                            <p class="ingredient-amount">{{ingredients.sugar}}<span>g</span></p>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-2" v-if="ingredients.oil > 0">
+                        <div class="badge" style="padding: 20px 15px 10px 15px; margin-bottom: 10%">
+                            <img src="img/oil.png">
+                            <p class="ingredient-name">Olive Oil</p>
+                            <p class="ingredient-amount">{{ingredients.oil}}<span>ml</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="row center-xs footer" style="margin: 50px 0px 0px 0px;">
+            <div class="col-xs-12">
+                <ul>
+                    <li class="first">Copyright 2020 <a href="index.html">Pizza Dough Calculator</a></li>
+                    <li>Created by <a href="https://dattner-dev.de/">DattnerDev</a></li>
+                    <li><a href="impressum.html">Legal Notice</a></li>
+                    <li><a href="datenschutz.html">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                custom: false,
+                style: 'Neapolitan',
+                number: 2,
+                weight: 230,
+                water: 60,
+                yeast: 1,
+                salt: 3,
+                sugar: 0,
+                oil: 0,
+            },
+            methods: {
+                setIngredients() {
+                    switch (this.style) {
+                        case 'Neapolitan': {
+                            this.custom = false;
+                            this.weight = 230;
+                            this.water = 60;
+                            this.yeast = 1;
+                            this.salt = 3;
+                            this.sugar = 0;
+                            this.oil = 0;
+                            break;
+                        }
+                        case 'New York Style': {
+                            this.custom = false;
+                            this.weight = 200;
+                            this.water = 62;
+                            this.yeast = 0.5;
+                            this.salt = 2;
+                            this.sugar = 2;
+                            this.oil = 2.5;
+                            break;
+                        }
+                        case 'Custom': {
+                            this.custom = true;
+                            break;
+                        }
+                    }
+                }
+            },
+            computed: {
+                ingredients() {
+                    var flourAmount = this.weight / (1 + (this.water / 100 + this.yeast / 100 + this.salt /
+                        100 + this.sugar / 100 + this.oil / 100));
+                    return {
+                        flour: Math.round(this.number * flourAmount),
+                        water: Math.round(this.number * flourAmount * this.water / 100),
+                        yeast: (this.number * flourAmount * this.yeast / 100).toFixed(1),
+                        salt: (this.number * flourAmount * this.salt / 100).toFixed(1),
+                        sugar: Math.round(this.number * flourAmount * this.sugar / 100),
+                        oil: Math.round(this.number * flourAmount * this.oil / 100),
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
