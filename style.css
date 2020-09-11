@@ -11,6 +11,7 @@ h1, h2, h3, h4 {
     color: #6B0606;
     letter-spacing: 1px;
     text-align: center;
+    text-shadow: 4px 4px #FFE4A3;
 }
 h1 {
     font-size: 80px;
@@ -34,7 +35,6 @@ p {
 }
 select {
     -webkit-appearance: none;
-    appearance: none;
     background-color: #FFE4A3;
     color: #BC0606;
     font-size: 20px;
