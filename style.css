@@ -33,6 +33,8 @@ p {
     margin: 10px 0px;
 }
 select {
+    -webkit-appearance: none;
+    appearance: none;
     background-color: #FFE4A3;
     color: #BC0606;
     font-size: 20px;
